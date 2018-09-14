@@ -46,21 +46,25 @@ const QRErrorCorrectLevel = {
 
 class IQrcode {
   constructor(props) {
-    // el canvas节点
-    // text: 编码文本
-    // width: 编码宽度
-    // height: 编码高度
-    // size: 二维码尺寸
-    // correctLevel: 容错率 [0, 1, 2, 3]
-    // background: 背景色
-    // foreground: 前景色
-    // jbcol: 渐变色
-    // jbtype: 渐变方式 ['r'圆形, 'h'垂直, 'w'水平, 'x'斜线, 'rx'反斜线]
-    // dr: 直角圆角([-1液态, 0直角, 1圆角], String)
-    // dan_w: 大正方形 颜色
-    // dan_l: 小正方形颜色
-    // logo: base64 图片 false
-
+    /**
+     * IQrcode() create a QRCode generator class
+     * QRCode create Param
+     *
+     * @param {Canvas Element} el 节点
+     * @param {string} text 编码文本
+     * @param {number} width 编码宽度
+     * @param {number} height 编码高度
+     * @param {number} size 二维码尺寸
+     * @param {number} correctLevel 容错率[0, 1, 2, 3]
+     * @param {string} foreground 前景色
+     * @param {string} background 背景色
+     * @param {string} jbcol 渐变色
+     * @param {string} jbtype 渐变方式
+     * @param {string} dr 直角圆角[-1液态, 0直角, 1圆角]
+     * @param {string} dan_w 大正方形颜色
+     * @param {string} dan_l 小正方形颜色
+     * @param {string} logo 图片base64数据
+     */
     const defaultParam = {
       el: null,
       text: '',
@@ -110,7 +114,7 @@ class IQrcode {
     node.addData(param.text);
     node.make();
 
-    let tempEl = document.getElementById('canvas');
+    let tempEl = param.el;
     if (!tempEl) return;
     tempEl.width = param.width;
     tempEl.height = param.height;

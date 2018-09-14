@@ -1,7 +1,7 @@
 import Qrcode from './qrcode';
 
 const appQrcode = new Qrcode({
-	el: 'canvas',
+	el: document.getElementById('canvas'),
 	text: 'https://www.qq.com',
 	correctLevel: 3,
 	size: 600,

@@ -3,7 +3,7 @@ import QRCode from './core';
 function validateColor(c) {
   const regexpA = /^#[0-9a-fA-F]{6}$/;
   const regexpB = /^#[0-9a-fA-F]{3}$/;
-  return regexpA.test(c) || regexpB.test(c)
+  return regexpA.test(c) || regexpB.test(c);
 }
 
 function isCanvasSupported() {
@@ -11,7 +11,7 @@ function isCanvasSupported() {
   return !!(el.getContext && el.getContext('2d'));
 }
 
-function clacImgZoomParam(d, maxHeight, width, height) {
+function clacImgZoomParam(maxWidth, maxHeight, width, height) {
   var result = {
     top: 0,
     left: 0,
@@ -20,8 +20,8 @@ function clacImgZoomParam(d, maxHeight, width, height) {
   };
 
   if (width > maxWidth || height > maxHeight) {
-    rateWidth = width / maxWidth;
-    rateHeight = height / maxHeight;
+    let rateWidth = width / maxWidth;
+    let rateHeight = height / maxHeight;
     if (rateWidth > rateHeight) {
       result.width = maxWidth;
       result.height = Math.round(height / rateWidth);
@@ -107,6 +107,16 @@ class IQrcode {
     this.createQrcode();
   }
 
+  update(props = {}) {
+    for (let key in props) {
+      if ({}.hasOwnProperty.call(props, key)) {
+        this.param[key] = props[key];
+      }
+    }
+
+    this.createQrcode();
+  }
+
   createQrcode() {
     const param = this.param;
     let node = new QRCode(param.typeNumber, param.correctLevel);
@@ -120,8 +130,8 @@ class IQrcode {
     tempEl.height = param.height;
 
     const canvas = tempEl.getContext('2d');
+
     this.renderCode(canvas, node);
-    this.renderBackround(canvas);
   }
 
   renderCode(canvas, node) {
@@ -202,22 +212,26 @@ class IQrcode {
       this.renderGrid(canvas, node, 1, dec, gridWidth, originX);
     }
 
+    this.renderBackround(canvas);
+
     // render center logo image
     if (param.logo) {
       canvas.globalCompositeOperation = 'source-over';
       const Logo = new Image();
+      Logo.onload = () => {
+        const maxWidth = param.width * 0.3;
+        const maxHeight = param.height * 0.3;
+        const zoomParam = clacImgZoomParam(
+          maxWidth,
+          maxHeight,
+          Logo.width,
+          Logo.height
+        );
+        const logoX = (param.width - zoomParam.width) / 2;
+        const logoY = (param.height - zoomParam.height) / 2;
+        canvas.drawImage(Logo, logoX, logoY, zoomParam.width, zoomParam.height);
+      };
       Logo.src = param.logo;
-      const maxWidth = param.width * 0.3;
-      const maxHeight = param.height * 0.3;
-      const zoomParam = clacImgZoomParam(
-        maxWidth,
-        maxHeight,
-        Logo.width,
-        Logo.height
-      );
-      const logoX = (param.width - zoomParam.width) / 2;
-      const logoY = (param.height - zoomParam.height) / 2;
-      canvas.drawImage(Logo, logoX, logoY, zoomParam.width, zoomParam.height);
     }
   }
 
@@ -358,10 +372,22 @@ class IQrcode {
         this.lineTo(startX + paddingX, startY + paddingY);
       } else {
         this.moveTo(startX + radius[0], startY);
-        this.arcTo(startX + paddingX, startY, startX + paddingX, startY + paddingY, radius[0]);
+        this.arcTo(
+          startX + paddingX,
+          startY,
+          startX + paddingX,
+          startY + paddingY,
+          radius[0]
+        );
         this.lineTo(startX + paddingX, startY);
         this.moveTo(startX + paddingX, startY + paddingY - radius[1]);
-        this.arcTo(startX + paddingX, startY + paddingY, startX, startY + paddingY, radius[1]);
+        this.arcTo(
+          startX + paddingX,
+          startY + paddingY,
+          startX,
+          startY + paddingY,
+          radius[1]
+        );
         this.lineTo(startX + paddingX, startY + paddingY);
         this.moveTo(startX + radius[2], startY + paddingY);
         this.arcTo(startX, startY + paddingY, startX, startY, radius[2]);

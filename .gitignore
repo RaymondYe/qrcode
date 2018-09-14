@@ -1,0 +1,11 @@
+# Include your project-specific ignores in this file
+.idea
+.project
+.DS_Store
+.vscode
+.cache
+npm-debug.log
+yarn.lock
+assets/index.html
+node_modules
+dist

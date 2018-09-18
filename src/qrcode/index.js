@@ -55,11 +55,11 @@ class IQrcode {
      * @param {number} width 编码宽度
      * @param {number} height 编码高度
      * @param {number} size 二维码尺寸
-     * @param {number} correctLevel 容错率[0, 1, 2, 3]
+     * @param {number} correctLevel 容错率['L' 'M' 'Q' 'H']
      * @param {string} foreground 前景色
      * @param {string} background 背景色
      * @param {string} jbcol 渐变色
-     * @param {string} jbtype 渐变方式
+     * @param {string} jbtype 渐变方式['r'圆形, 'h'垂直, 'w'水平, 'x'斜线, 'rx'反斜线]
      * @param {string} dr 直角圆角[-1液态, 0直角, 1圆角]
      * @param {string} dan_w 大正方形颜色
      * @param {string} dan_l 小正方形颜色
@@ -71,7 +71,7 @@ class IQrcode {
       width: 200,
       height: 200,
       typeNumber: -1,
-      correctLevel: QRErrorCorrectLevel.H,
+      correctLevel: 'H',
       background: '#fff',
       foreground: '#222',
       jbcol: '#222',
@@ -114,12 +114,21 @@ class IQrcode {
       }
     }
 
+    // Init Size
+    if (props.size) {
+      this.param.width = props.size;
+      this.param.height = props.size;
+    }
+
     this.createQrcode();
   }
 
   createQrcode() {
     const param = this.param;
-    let node = new QRCode(param.typeNumber, param.correctLevel);
+    let node = new QRCode(
+      param.typeNumber,
+      QRErrorCorrectLevel[param.correctLevel]
+    );
     param.text = this.fromatText(param.text);
     node.addData(param.text);
     node.make();
